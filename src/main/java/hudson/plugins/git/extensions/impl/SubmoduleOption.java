@@ -5,6 +5,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitException;
 import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.Revision;
 import hudson.plugins.git.SubmoduleCombinator;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.plugins.git.extensions.GitSCMExtensionDescriptor;
@@ -97,7 +98,9 @@ public class SubmoduleOption extends GitSCMExtension {
         if (!disableSubmodules && git.hasGitModules()) {
             // This ensures we don't miss changes to submodule paths and allows
             // seamless use of bare and non-bare superproject repositories.
-            git.setupSubmoduleUrls(revToBuild.lastBuild.getRevision(), listener);
+            Revision lastBuiltRevision = revToBuild != null ? revToBuild.getLastBuiltRevision()
+                                                            : null;
+            git.setupSubmoduleUrls(lastBuiltRevision, listener);
             git.submoduleUpdate()
                     .recursive(recursiveSubmodules)
                     .remoteTracking(trackingSubmodules)
